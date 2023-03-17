@@ -1,0 +1,156 @@
+﻿@page "/universityGroupsCollaborations/{UniversityId:int}/{CenterId:int}/{GroupId:int}"
+@using Domain.UniversityCollaborations.DTOs
+@using Application.UniversityCollaborations
+@using Domain.UniversityCollaborations.Entities
+
+@using Domain.InvestigationCenters.DTOs
+@using Application.InvestigationCenters
+@using Domain.InvestigationCenters.Entities
+@using Presentation.InvestigationCenters
+
+@using Domain.InvestigationGroups.DTOs
+@using Application.InvestigationGroups
+@using Domain.InvestigationGroups.Entities
+
+@using Domain.Universities.DTOs
+@using Domain.Universities.Entities
+@using Application.Universities
+@using Presentation.Core.Components
+
+@using Domain.Departments.DTOs
+@using Domain.Departments.Entities
+@using Application.Departments
+
+
+@inject IUniversityCollaborationsService UniversityCollaborationsService
+@inject IInvestigationCentersService InvestigationCenterService
+@inject IInvestigationGroupsService InvestigationGroupService
+@inject IUniversitiesService UniversitiesService
+@inject IDepartmensService DepartmentsService
+
+<div class="table">
+    <Loading IsLoading="_isLoading">
+        @if (GroupOfUniversityCollaborations is null)
+        {
+            <h4 class="text-danger">No existen grupos registrados.</h4>
+        }
+        else
+        {
+            <h1>Grupo de Investigacion</h1>
+            <table>
+                <thead>
+                <th> Grupo de Investigacion </th>
+                <th>Centro</th>
+                </thead>
+                <tbody>
+                <td>@InvestigationGroup.Name</td>
+                <td>@InvestigationCenter.Name</td>
+                </tbody>
+            </table>
+            <h1>Colaboraciones</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Grupo de investigacion</th>
+                        <th>Enlace</th>
+                        <th>Universidad colaboradora</th>
+                        <th>Pais</th>
+                        <th>Departamento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var investigationGroup in InvestigationGroups)
+                    {
+                        @foreach (var groupOfUniversityCollaborations in GroupOfUniversityCollaborations)
+                        {
+                            @if (groupOfUniversityCollaborations.CollaboratorGroupUniversity == investigationGroup.Id && groupOfUniversityCollaborations.UniversityGroup == GroupId)
+                            {
+                    <tr>
+                        <td>@investigationGroup.Name</td>
+                        <a href=@investigationGroup.Link> </a>
+
+                        @foreach (var university in Universities)
+                        {
+                            @if (university.Id == investigationGroup.UniveristyId)
+                            {
+                                <td>@university.Name</td>
+                                <td>@university.Country</td>
+                            }
+                        }
+                        @foreach (var department in Departments)
+                        {
+                            @if (department.Id == investigationGroup.DepartmentId)
+                            {
+                                <td>@department.Name</td>
+                            }
+                        }
+
+                    </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+    </Loading>
+</div>
+
+@code {
+    [Parameter] public int CenterId { get; set; }
+    [Parameter] public int UniversityId { get; set; }
+    [Parameter] public int GroupId { get; set; }
+
+    private bool _isLoading = true;
+    private IEnumerable<UniversityCollaborationDTO> GroupOfUniversityCollaborations;
+    private InvestigationCenter InvestigationCenter;
+    private IEnumerable<InvestigationGroupDTO> InvestigationGroups;
+    private InvestigationGroup InvestigationGroup;
+    private IEnumerable<UniversityDTO>? Universities;
+    private IEnumerable<DepartmentDTO>? Departments;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCollaborationsGroups(GroupId);
+        await LoadGroups();
+        await LoadUniversities();
+        await LoadDepartments();
+        await LoadCenters();
+    }
+
+    private async Task LoadUniversities()
+    {
+        _isLoading = true;
+        Universities = await UniversitiesService.GetUniversityAsync();
+        _isLoading = false;
+    }
+
+    private async Task LoadDepartments()
+    {
+        _isLoading = true;
+        Departments = await DepartmentsService.GetDepartmentsAsync();
+        _isLoading = false;
+    }
+
+    public async Task LoadCollaborationsGroups(int groupId)
+    {
+        _isLoading = true;
+        GroupOfUniversityCollaborations = await UniversityCollaborationsService.GetUniversityCollaborationsAsync();
+        _isLoading = false;
+    }
+
+    public async Task LoadCenters()
+    {
+        _isLoading = true;
+        InvestigationCenter = await InvestigationCenterService.GetInvestigationCentersByIdAsync(CenterId);
+        _isLoading = false;
+    }
+
+    public async Task LoadGroups()
+    {
+        _isLoading = true;
+        InvestigationGroup = await InvestigationGroupService.GetInvestigationGroupsByIdAsync(GroupId);
+        InvestigationGroups = await InvestigationGroupService.GetInvestigationGroupsAsync();
+        _isLoading = false;
+    }
+}

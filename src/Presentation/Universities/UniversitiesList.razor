@@ -1,0 +1,84 @@
+﻿@page "/universities"
+@page "/"
+@using Domain.Universities.DTOs
+@using Domain.Universities.Entities
+@using Application.Universities
+@using Presentation.Core.Components
+
+
+@inject IUniversitiesService UniversitiesService
+@inject NavigationManager navigationManager
+
+<div class="table">
+    <h1>Universidades</h1>
+    <Loading IsLoading="_isLoading">
+        @if (!University!.Any())
+        {
+            <h4 class="text-danger">No existen universidades registradas.</h4>
+        }
+        else
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Link</th>
+                        <th>Country</th>
+                        <th>Centros de investigacion</th>
+                        <th>Editar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var university in University)
+                    {
+                        <tr>
+                            <td>@university.Name</td>
+                            <td>
+                                <a href="@university.Link" target="_blank" rel="noopener noreferrer">@university.Link</a>
+                            </td>
+                            <td>@university.Country</td>
+                            <td>
+                                <a href="/investigationCenters/@university.Id">Centros de investigacion de la universidad</a>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger" @onclick="_ => HandleDeleteProduct(university.Id)">
+                                    <span class="fas fa-trash"> Eliminar</span>
+                                </button>
+                                <a href="/universityEditForm/@university.Id">Editar Universidad</a>
+                            </td>
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+        }
+    </Loading>
+</div>
+
+@code {
+
+    private bool _isLoading = true;
+
+    [Parameter]
+    public EventCallback<University> OnDelete { get; set; }
+
+    private IEnumerable<UniversityDTO>? University;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUniversities();
+    }
+
+    private async Task LoadUniversities()
+    {
+        _isLoading = true;
+        University = await UniversitiesService.GetUniversityAsync();
+        _isLoading = false;
+    }
+
+    private async Task HandleDeleteProduct(int id)
+    {
+        await UniversitiesService.DeleteUniversity(id);
+        navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
+    }
+}

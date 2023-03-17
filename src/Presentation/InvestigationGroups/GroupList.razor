@@ -1,0 +1,83 @@
+﻿@page "/investigationGroups/{UniversityId:int}/{CenterId:int}"
+@using Domain.InvestigationGroups.DTOs
+@using Application.InvestigationGroups
+@using Domain.InvestigationGroups.Entities
+
+@using Domain.InvestigationCenters.DTOs
+@using Application.InvestigationCenters
+@using Domain.InvestigationCenters.Entities
+@using Presentation.InvestigationCenters
+
+@inject IInvestigationGroupsService InvestigationGroupService
+@inject IInvestigationCentersService InvestigationCenterService
+
+
+<div class="table">
+    <Loading IsLoading="_isLoading">
+        @if (!InvestigationGroups!.Any())
+        {
+            <h4 class="text-danger">No existen grupos registrados.</h4>
+        }
+        else
+        {
+            <h1>Grupos de investigacion de @InvestigationCenter.Name</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Number</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var investigationGroup in InvestigationGroups)
+                    {
+                        <tr>
+                            <td>@investigationGroup.Name</td>
+                            <td>@investigationGroup.Number</td>
+                            <td>
+                                <a href="@investigationGroup.Link">
+                                    @investigationGroup.Link
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/universityGroupsCollaborations/@investigationGroup.UniversityId/@CenterId/@investigationGroup.Id">Detalles</a>
+                            </td>
+                        </tr>
+
+
+                    }
+                </tbody>
+            </table>
+        }
+    </Loading>
+</div>
+
+@code {
+    [Parameter] public int CenterId { get; set; }
+    [Parameter] public int UniversityId { get; set; }
+
+    private bool _isLoading = true;
+    private IEnumerable<InvestigationGroup> InvestigationGroups;
+    private InvestigationCenter InvestigationCenter;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadGroups(UniversityId, CenterId);
+        await LoadCenters();
+    }
+
+    public async Task LoadGroups(int universityId, int id)
+    {
+        _isLoading = true;
+        InvestigationGroups = await InvestigationGroupService.GetInvestigationGroupsByCenterIdAsync(universityId, id);
+        _isLoading = false;
+    }
+
+    public async Task LoadCenters()
+    {
+        _isLoading = true;
+        InvestigationCenter = await InvestigationCenterService.GetInvestigationCentersByIdAsync(CenterId);
+        _isLoading = false;
+    }
+}

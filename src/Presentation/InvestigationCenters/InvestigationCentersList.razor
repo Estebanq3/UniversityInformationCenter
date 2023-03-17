@@ -1,0 +1,89 @@
+﻿@page "/investigationCenters/{UniversityId:int}"
+@using Domain.InvestigationCenters.DTOs
+@using Application.InvestigationCenters
+@using Domain.InvestigationCenters.Entities
+@using Presentation.InvestigationCenters
+
+@using Domain.Universities.DTOs
+@using Domain.Universities.Entities
+@using Application.Universities
+@using Presentation.Core.Components
+
+
+@inject IInvestigationCentersService InvestigationCenterService
+@inject IUniversitiesService UniversitiesService
+
+<div class="table">
+    <h1>Centros de Investigacion</h1>
+    <Loading IsLoading="_isLoading">
+        @if (!InvestigationCenters!.Any())
+        {
+            <h4 class="text-danger">No existen centros registrados.</h4>
+        }
+        else
+        {
+            <h1>Universidad: @university.Name</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Link</th>
+                        <th>Grupos de Investigacion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var investigationCenter in InvestigationCenters)
+                    {
+                        <tr>
+                            <td>@investigationCenter.Name</td>
+                            <td>
+
+                                <a href="@investigationCenter.Link">
+                                    @investigationCenter.Link"
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/investigationGroups/@investigationCenter.UniversityId/@investigationCenter.Id">Listar grupos del centro</a>
+                            </td>
+                        </tr>
+
+
+                    }
+                </tbody>
+            </table>
+        }
+    </Loading>
+</div>
+
+
+@code {
+
+    [Parameter]
+    public int UniversityId { get; set; }
+
+    private bool _isLoading = true;
+
+    private IEnumerable<InvestigationCenter>? InvestigationCenters;
+    private University university;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCenters();
+        await LoadUniversities();
+    }
+
+    public async Task LoadCenters()
+    {
+        _isLoading = true;
+        InvestigationCenters = await InvestigationCenterService.GetInvestigationCentersByUniversityIdAsync(UniversityId);
+        _isLoading = false;
+    }
+
+    private async Task LoadUniversities()
+    {
+        _isLoading = true;
+        university = await UniversitiesService.GetUniversityByIdAsync(UniversityId);
+        _isLoading = false;
+    }
+}

@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="100502b8-afef-465e-9747-221e122e8e43" ChangeDateTime="10/29/2021 23:38:58">
+    <Property Name="ElementName" Value="[dbo].[InvestigationCenter].[Enlace]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[InvestigationCenter]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Link" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c9d15e5d-faaf-4e12-bdab-f841d4cb97b5" ChangeDateTime="10/29/2021 23:47:56">
+    <Property Name="ElementName" Value="[dbo].[InvestigationGroup].[InvestigationCenterId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[InvestigationGroup]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Country" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="fa8b37ae-9571-488e-b0a9-cdb4aef2ec03" ChangeDateTime="10/30/2021 01:59:31">
+    <Property Name="ElementName" Value="[dbo].[InvestigationCenter].[UnivesityId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[InvestigationCenter]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="UniversityId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="69639e84-b9b2-4dec-b8e3-4de2338be97c" ChangeDateTime="10/30/2021 17:35:34">
+    <Property Name="ElementName" Value="[dbo].[UniversityCollaborations].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[UniversityCollaborations]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="IdUniversity" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="478bb53a-84bd-4a9f-b120-cc59091c2e9f" ChangeDateTime="10/30/2021 17:35:40">
+    <Property Name="ElementName" Value="[dbo].[UniversityCollaborations].[IdUniversity]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[UniversityCollaborations]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="UniversityId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="171497a5-bf1c-4a93-9111-ac4567feca35" ChangeDateTime="10/30/2021 19:02:47">
+    <Property Name="ElementName" Value="[dbo].[UniversityCollaborations].[UniversityId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[UniversityCollaborations]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Id" />
+  </Operation>
+</Operations>

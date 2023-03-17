@@ -1,0 +1,7 @@
+﻿CREATE TABLE [dbo].[University]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [Name] VARCHAR(100) NOT NULL, 
+    [Link] VARCHAR(200) NOT NULL, 
+    [Country] VARCHAR(100) NOT NULL
+)

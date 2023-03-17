@@ -1,0 +1,81 @@
+﻿@page "/universityEditForm/{idUniversity:int}"
+@using Domain.Universities.DTOs
+@using Domain.Universities.Entities
+@using Application.Universities
+@using Presentation.Core.Components
+@using Presentation.Universities.Models
+
+@inject IUniversitiesService UniversitiesService
+@inject NavigationManager navigationManager
+
+<EditForm OnValidSubmit="HandleSubmit" Model="@Model">
+    <FluentValidationValidator />
+    <h3>Insertar Universidad</h3>
+    <ValidationSummary />
+    <div class="form-group">
+        <label>Name</label>
+        <InputText @bind-Value="Model.Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Link</label>
+        <InputText @bind-Value="Model.Link" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Country</label>
+        <InputText @bind-Value="Model.Country" class="form-control" />
+    </div>
+</EditForm>
+<span>
+    <button class="btn btn-primary" @onclick="@HandleSubmit" type="submit">Editar</button>
+    <button class="btn btn-warning" @onclick="@QuitWithoutSave">Guardar sin editar</button>
+</span>
+
+
+@code
+{
+    [Parameter] public int idUniversity { get; set; }
+
+    private University? _university;
+    [Parameter]
+    public EventCallback<University> OnValidSubmit { get; set; }
+
+    private UniversityModel Model { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUniversity();
+        if (_university is not null)
+        {
+            Model.Name = _university.Name;
+            Model.Link = _university.Link;
+            Model.Country = _university.Country;
+        }
+    }
+
+    public async Task LoadUniversity()
+    {
+        _university = await UniversitiesService.GetUniversityByIdAsync(idUniversity);
+
+    }
+
+
+    private async Task HandleSubmit()
+    {
+        var university = new University(Model.Name, Model.Link, Model.Country);
+
+        await OnValidSubmit.InvokeAsync(university);
+        await UniversitiesService.UpdateUniversity(idUniversity, Model.Name, Model.Link, Model.Country);
+
+        navigationManager.NavigateTo("/universities", forceLoad: true);
+
+        // reset the form
+        //Model = new UniversityModel();
+    }
+
+    private void QuitWithoutSave()
+    {
+        navigationManager.NavigateTo("/universities", forceLoad: true);
+        // reset the form
+        //Model = new UniversityModel();
+    }
+}

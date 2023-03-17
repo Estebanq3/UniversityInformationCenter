@@ -1,0 +1,56 @@
+﻿@page "/universityForm"
+@using Domain.Universities.DTOs
+@using Domain.Universities.Entities
+@using Application.Universities
+@using Presentation.Core.Components
+@using Presentation.Universities.Models
+
+@inject IUniversitiesService UniversitiesService
+@inject NavigationManager navigationManager
+
+<EditForm OnValidSubmit="HandleSubmit" Model="@Model">
+    <FluentValidationValidator />
+    <h3>Insertar Universidad</h3>
+    <ValidationSummary />
+    <div class="form-group">
+        <label>Nombre Universidad</label>
+        <InputText @bind-Value="Model.Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Link de Universidad</label>
+        <InputText @bind-Value="Model.Link" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>País</label>
+        <InputText @bind-Value="Model.Country" class="form-control" />
+    </div>
+</EditForm>
+<span>
+    <button class="btn btn-primary" @onclick="@HandleSubmit" type="submit">Insertar</button>
+    <button class="btn btn-warning" @onclick="@QuitWithoutSave">Cerrar sin insertar</button>
+</span>
+
+    @code {
+        [Parameter]
+        public EventCallback<University> OnValidSubmit { get; set; }
+
+        private UniversityModel Model { get; set; } = new();
+
+        private async Task HandleSubmit()
+        {
+            var university = new University(Model.Name, Model.Link, Model.Country);
+
+            await OnValidSubmit.InvokeAsync(university);
+            await UniversitiesService.AddUniversityAsync(university);
+            // reset the form
+            Model = new UniversityModel();
+        }
+
+        private void QuitWithoutSave()
+        {
+            navigationManager.NavigateTo("/universities", forceLoad: true);
+            // reset the form
+            //Model = new UniversityModel();
+        }
+
+    }
